@@ -1,0 +1,15 @@
+{
+  "name": "sesi3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "http.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "jalan": "nodemon http.js",
+    "nodemon": "./node_modules/nodemon/bin/nodemon.js app js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
