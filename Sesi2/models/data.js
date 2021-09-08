@@ -52,6 +52,7 @@ const getStadiumsName = (id) => {
   } else {
     return null;
   }
+}
 
 // fungsi getGroupDataByName akan mengembalikan objek dari getGroupDataByName
 
@@ -80,6 +81,4 @@ module.exports = {
   getTeamName,
   getStadiumsName,
   getGroupDataByName
-}
-
 }

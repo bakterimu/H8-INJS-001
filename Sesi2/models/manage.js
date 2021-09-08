@@ -52,3 +52,82 @@ const getTeams = () => {
     mainView.generateView(tableConfig, content, 'WORLD CUP TEAMS');
   })
 }
+
+// fungsi getGroupsMatch akan render semua informarsi grup match
+const getGroupsMatch = () => {
+  // recap
+  const tableConfig = {
+    head: ['Groups', 'Winner', 'Runner Up']
+  };
+  const groups = Object.entries(store.getData().groups);
+  let content = new Array();
+  groups.map(([key, value]) => {
+    content.push([
+      value.name,
+      store.getTeamName(value.winner)||'not yet',
+      store.getTeamName(value.runnerup)||'not yet'
+    ]);
+  });
+  mainView.generateView(tableConfig, content, 'GROUP MATCH RECAP');
+  console.log('---------------------------------------------------------');
+    // ronde 16
+  const tableConfigForRound16 = {
+    head: ['Time', '', 'Runner Up' ]
+  };
+
+  // group match detail
+  const tableConfigForMatch = {
+    head: ['Time', 'Stadium', 'Home', 'Away', 'Match', 'Score']
+  };
+  groups.forEach(([key, value]) => {
+    let groupMatchs = new Array();
+    value.matches.map((list) => {
+      groupMatchs.push([
+        moment(list.date).calendar(),
+        store.getStadiumsName(list.stadium),
+        store.getTeamName(list.home_team)||'error',
+        store.getTeamName(list.away_team)||'error',
+        'match ' + list.name,
+        list.home_result + ' : ' + list.away_result
+      ]);
+    });
+    mainView.generateView(tableConfigForMatch, groupMatchs, 'GROUP ' + key  )
+  })
+}
+
+// fungsi getMatchByGroupName akan render informasi match berdasarkan group
+const getMatchByGroupName = (groupName) => {
+  const tableConfigForMatch = {
+    head: ['Time', 'Stadium', 'Home', 'Away', 'Match', 'Score']
+  };
+  const groupData = store.getGroupDataByName(groupName);
+  let groupMatchs = new Array();
+  if (groupData) {
+    groupData[1].matches.map((list) => {
+      groupMatchs.push([
+        moment(list.date).calendar(),
+        store.getStadiumsName(list.stadium),
+        store.getTeamName(list.home_team)||'error', 
+        store.getTeamName(list.away_team)||'error',
+        'match ' + list.name,
+        list.home_result + ' : ' + list.away_result
+      ]);
+    });
+    mainView.generateView(tableConfigForMatch, groupMatchs, 'GROUP ' + groupName);
+  } else {
+    console.log("Group doesn't exist.");
+  }
+}
+
+const refreshData = () => {
+  store.refreshData();
+}
+
+module.exports = {
+  refreshData,
+  getStadium,
+  getTvChannels,
+  getTeams,
+  getGroupsMatch,
+  getMatchByGroupName
+}
