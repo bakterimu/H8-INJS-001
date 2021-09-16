@@ -6,7 +6,6 @@ let orang = [
   { name: 'Rizky'},
   { name: 'Yolan'}
 ]
-
 // 1. Easy - .map, menambahkan properti noAbsen
 orang.map((list) => {
   if (list.name == 'Yusuf') {
