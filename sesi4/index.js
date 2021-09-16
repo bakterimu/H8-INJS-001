@@ -59,7 +59,6 @@ app.delete('/users/:id', (req, res, next) => {
 app.patch('/users/:id', (req, res) => {
   const {body} = req;
   const prevData = data[req.params.id - 1];
-
   data[req.params.id - 1] = {
     ...prevData,
     email: body.email ?? prevData.email,
@@ -67,7 +66,6 @@ app.patch('/users/:id', (req, res) => {
     last_name: body.last_name ?? prevData.last_name,
     avatar: body.avatar ?? prevData.avatar
   };
-
   fs.writeFile('./data.json', JSON.stringify(data, null, 2), () => { console.log('Data berhasil diupdate di json') });
 })
 
