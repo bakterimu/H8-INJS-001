@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "email": "izhar1290@gmail.com",
+    "password": "haihai123",
+    "first_name": "Izhar",
+    "last_name": "Mayranda"
+  },
+  {
+    "id": 2,
+    "email": "yuli12@gmail.com",
+    "password": "passyuli123",
+    "first_name": "Yuliana",
+    "last_name": "Novita"
+  },
+  {
+    "id": 3,
+    "email": "dimas@gmail.com",
+    "password": "passdimas",
+    "first_name": "Dimas",
+    "last_name": "Supriadi"
+  },
+  {
+    "id": 4,
+    "email": "ilham56@gmail.com",
+    "password": "passilham",
+    "first_name": "Ilham",
+    "last_name": "Adi"
+  }
+]
