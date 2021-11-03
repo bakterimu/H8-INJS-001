@@ -20,7 +20,7 @@ create table User (
 app.use((req, res, next) => {
   try {
     let decoded = jwt.verify(req.headers.token, 'rahasia');
-    db.query('select * from "User" where id = and owner_id = ', (err, result) => {
+    db.query('select * from "User" where owner_id = ', (err, result) => {
       if(err) {
         res.status(401).json({msg: 'User belum mendaftar!'});
       } else {
@@ -35,13 +35,15 @@ app.use((req, res, next) => {
 app.post('/api/v1/reflections', (req, res) => {
   let id = nanoid(8);
   let {title, success, targetMonth, targetYear} = req.body;
-  let createdAt = new Date();
+  let createdAt = new Date().toLocaleDateString();
+  let updatedAt = new Date().toLocaleDateString();
   success = (success.toLowerCase() === 'true');
   targetMonth = Number(targetMonth);
   targetYear = Number(targetYear);
   // Belum menambahkan owner id untuk relasi tabel one to many
-  db.query(`insert into "User" (id, title, success, targetMonth, targetYear, createdAt) 
-    values ('${id}', '${title}', ${success}, ${targetMonth}, ${targetYear}, '${createdAt}')`, (err, result) => {
+  db.query(`insert into "User" (id, title, success, targetMonth, targetYear, createdAt, updatedAt) 
+    values ('${id}', '${title}', ${success}, ${targetMonth}, ${targetYear}, '${createdAt}', '${updatedAt}')`, 
+    (err, result) => {
     if(err) {
       res.status(500).json(err)
     } else {
@@ -69,24 +71,27 @@ app.put('/api/v1/reflections/:id', (req, res) => {
     if(err) {
       res.status(500).json(err);
     } else {
-      let prevData =  result.rows[0]
+      let prevData =  result.rows[0];
       const user = {
         ...prevData,
         title: body.title ?? prevData.title,
         success: body.success ?? prevData.success,
-        updatedAt: new Date()
+        targetMonth: body.targetMonth ?? prevData.targetMonth,
+        targetYear: body.targetYear ?? prevData.targetYear,
+        updatedAt: new Date().toLocaleDateString(),
       };
       // Owner id belum
-      db.query(`insert into "User" (id, title, success, createdAt, updatedAt, owner_id) 
-      values
-      ('${id}', '${user.title}', '${user.success}', '${user.createdAt}', '${user.updatedAt}');`, (error, hasil) => {
-        if(error) {
-          res.status(500).json(error);
-        } else {
-          res.status(200).json({msg: 'Done', data: hasil.rows});
-        };
-      });
-    };
+      db.query(`update "User"
+        set id='${user.id}', title='${user.title}', success = '${user.success}', targetMonth=${user.targetMonth}, targetYear=${user.targetYear}, updatedAt='${user.updatedAt}}'
+        where id = '${user.id}'`,
+        (error, hasil) => {
+          if(error) {
+            res.status(500).json(error);
+          } else {
+            res.status(200).json({msg: 'Done', data: hasil.rows});
+          };
+        });
+      };
   });
 });
 
