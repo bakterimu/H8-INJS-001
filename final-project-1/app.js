@@ -17,20 +17,7 @@ create table User (
 	owner_id varchar
 )
 */
-app.use((req, res, next) => {
-  try {
-    let decoded = jwt.verify(req.headers.token, "rahasia");
-    db.query('select * from "User" where owner_id = ', (err, result) => {
-      if (err) {
-        res.status(401).json({ msg: "User belum mendaftar!" });
-      } else {
-        next();
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ msg: "Token tidak ditemukan" });
-  }
-});
+
 
 // Routes
 app.use(route);

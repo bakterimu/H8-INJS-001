@@ -1,21 +1,20 @@
-const db = require("./db.js");
+const db = require("../db.js");
 const passwordHash = require("password-hash");
 const { v4: uuidv4} = require("uuid");
 const jwt = require("jsonwebtoken");
 
 const RegistrasiUser = (request, response) => {
   let owner_id = uuidv4();
-  let username = request.body.username;
   let email = request.body.email;
   let password = passwordHash.generate(request.body.password);
   db.query(
-    `INSERT INTO users (owner_id,username,email,password) VALUES ('${owner_id}','${username}','${email}','${password}')`,
+    `INSERT INTO users (owner_id,username,email,password) VALUES ('${owner_id}','${email}','${password}')`,
     (error, results) => {
       if (error) {
         throw error;
       }
       response.status(201).send({
-        message: "Registrasi success !",
+        message: "Registrasi sukses!",
         status: true,
       });
     }
@@ -34,49 +33,44 @@ const LoginUser = (request, response) => {
       }
       if (results.rowCount > 0) {
         let data = {
-          id: results.rows[0].owner_id,
-          username: results.rows[0].username,
-          email: results.rows[0].email,
+          owner_id: results.rows[0].owner_id,
+          email: results.rows[0].email
         };
         if (passwordHash.verify(pass, results.rows[0].password)) {
           let token = jwt.sign(data, "rahasia");
-          let decoded = jwt.verify(token, "rahasia");
           response.status(200).json({
             status: true,
             message: "login success !",
             data: data,
-            token: token,
-            hasiltoken: decoded.id,
+            token: token
           });
         } else {
-          response.status(201).json({
+          response.status().json({
             status: false,
             message: "email & password not valid !",
           });
         }
       } else {
-        response.status(201).json("email & password not valid !");
+        response.status(401).json("email atau password tidak valid !");
       }
     }
   );
 };
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  console.log(authHeader);
-  if (authHeader == null)
-    return res.status(401).send({
-      message: "unAuthorization !",
-      status: false,
+const authenticateToken = (req, res, next) => {
+  try {
+    let decoded = jwt.verify(req.headers.token, "rahasia");
+    db.query(`select * from "User" where owner_id = '${decoded.owner_id}'`, (err, result) => {
+      if (err) {
+        res.status(401).json({ msg: "User belum mendaftar!" });
+      } else {
+        next();
+      }
     });
-
-  jwt.verify(authHeader, "rahasia", (err, user) => {
-    console.log(err);
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
+  } catch (err) {
+    res.status(500).json({ msg: "Token tidak ditemukan" });
+  };
+};
 
 const createData = (req, res) => {
   let id = uuidv4();
