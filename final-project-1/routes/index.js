@@ -1,14 +1,13 @@
 const route = require('express').Router();
 const user = require('./../controllers/userController.js');
-const jwt = require('jsonwebtoken');
-const passwordHash = require('password-hash');
 
-app.get('/', (req, res) => {
+route.get('/', (req, res) => {
   res.send('reflections aplication final project hacktiv8')
 })
 
-app.post('/login', user.LoginUser);
-app.post('/register', user.RegistrasiUser);
+route.post('/register', user.RegistrasiUser);
+
+route.post('/login', user.LoginUser);
 
 route.use(user.authenticateToken);
 
